@@ -39,12 +39,12 @@ def train():
 
     model.load_weights("baby_alphazero/v1")
     
-    
     while len(os.listdir("games")) < num_processes:
         print(f"Sleeping, I, {os.getpid()}, am boss but there aren't enough processes done yet.")
         time.sleep(20)
          
     print(f"Process {os.getpid()} starting training.")
+    open("info.txt", "w").write(f"Version: {version+1}")
 
     window_size = min(20, max(min(version, 4), version//2))*episode_length 
     print(f"Window size: {window_size}")
@@ -60,16 +60,23 @@ def train():
 
     print(f"Length of training data: {len(training_data)}")
 
-    boards, policies, results = expand(training_data)
+    def generator():
+        i = 0
+        while i < len(training_data):
+            i += 45000 
+            yield training_data[i-45000, i]
 
-    print(f"Shape of boards: {boards.shape}")
-    print(f"Shape of policies: {policies.shape}") 
-    print(f"Shape of results: {results.shape}") 
- 
-    model.fit(boards, {'policy': policies, 'value': results}, epochs=2, batch_size=32)
+    for i in generator():
+        boards, policies, results = expand(training_data)
+
+        print(f"Shape of boards: {boards.shape}")
+        print(f"Shape of policies: {policies.shape}") 
+        print(f"Shape of results: {results.shape}") 
+    
+        model.fit(boards, {'policy': policies, 'value': results}, epochs=2, batch_size=32)
+
     model.save_weights("baby_alphazero/v1")
     
-    open("info.txt", "w").write(f"Version: {version+1}")
     
 num_processes = int(sys.argv[1])
 episode_length = int(sys.argv[2])

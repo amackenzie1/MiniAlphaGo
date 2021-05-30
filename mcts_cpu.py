@@ -69,6 +69,7 @@ class MonteCarloSearchTree:
         self.root = Node(Board(), move=None, prob=1, root=True)
         self.fill(self.root)
         self.policy = None
+        self.num_moves = 0
     
         
     def get_move(self):
@@ -126,6 +127,9 @@ class MonteCarloSearchTree:
             if i != move:
                 del self.root.children[i]
         self.root = self.root.children[move]
+        self.num_moves += 1
+        if self.num_moves > 30:
+            self.tau = 0.01
         if self.root.N == 0:
             self.fill(self.root)
         if self.root.board.is_done():
