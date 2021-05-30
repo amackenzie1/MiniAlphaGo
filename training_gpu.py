@@ -64,7 +64,7 @@ def train():
         i = 0
         while i < len(training_data):
             i += 45000 
-            yield training_data[i-45000, i]
+            yield training_data[(i-45000):i]
 
     for i in generator():
         boards, policies, results = expand(training_data)
