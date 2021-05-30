@@ -122,6 +122,9 @@ class MonteCarloSearchTree:
             self.search_once(self.root)
 
     def advance_root(self, move):
+        for i in list(self.root.children.keys()):
+            if i != move:
+                del self.root.children[i]
         self.root = self.root.children[move]
         if self.root.N == 0:
             self.fill(self.root)
@@ -242,6 +245,5 @@ if "baby_alphazero" not in os.listdir():
     model.save_weights("baby_alphazero/v1")
 
 episode_length = int(sys.argv[1])
-
 
 process(episode_length)
