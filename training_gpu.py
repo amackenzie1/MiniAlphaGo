@@ -14,6 +14,7 @@ from expand_boards import expand
 import random 
 from uuid import uuid1
 import sys 
+from sklearn import shuffle 
 
 model = get_model()
 model.load_weights("baby_alphazero/v1")
@@ -56,24 +57,25 @@ def train():
     training_data += get_data()
     training_data = training_data[-1*window_size:]
     pickle.dump(training_data, open(f"training_data.p", "wb"))
-    random.shuffle(training_data)
-
     print(f"Length of training data: {len(training_data)}")
+
+    boards, policies, results = expand(training_data)
+    del training_data
+    boards, policies, results = shuffle(boards, policies, results)
 
     def generator():
         i = 0
         while i < len(training_data):
-            i += 45000 
-            yield training_data[(i-45000):i]
+            i += 300000 
+            yield boards[(i-300000):i], policies[(i-300000):i], results[(i-300000):i]
 
-    for data in generator():
-        boards, policies, results = expand(data)
-
+    for boards, policies, results in generator():
+    
         print(f"Shape of boards: {boards.shape}")
         print(f"Shape of policies: {policies.shape}") 
         print(f"Shape of results: {results.shape}") 
     
-        model.fit(boards, {'policy': policies, 'value': results}, epochs=2, batch_size=32)
+        model.fit(boards, {'policy': policies, 'value': results}, epochs=1, batch_size=32)
 
     model.save_weights("baby_alphazero/v1")
     
