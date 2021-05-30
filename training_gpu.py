@@ -66,8 +66,8 @@ def train():
             i += 45000 
             yield training_data[(i-45000):i]
 
-    for i in generator():
-        boards, policies, results = expand(training_data)
+    for data in generator():
+        boards, policies, results = expand(data)
 
         print(f"Shape of boards: {boards.shape}")
         print(f"Shape of policies: {policies.shape}") 
