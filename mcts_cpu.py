@@ -149,20 +149,16 @@ def play_game(tau, depth):
 
     mcts = MonteCarloSearchTree(tau)
     mcts.search(depth)
-    mcts.info()
     boards.append(mcts.root.board.to_array())
     model_move = mcts.get_move()
     policies.append(mcts.policy)
     x = mcts.advance_root(model_move)
-    mcts.root.board.display()
     while x == 2:
         mcts.search(depth)
-        mcts.info()
         boards.append(mcts.root.board.to_array())
         policies.append(mcts.policy)
         model_move = mcts.get_move() 
         x = mcts.advance_root(model_move)
-        mcts.root.board.display()
 
     boards.append(mcts.root.board.to_array())
     policies.append(mcts.policy)
@@ -197,7 +193,7 @@ def iterate(episode_length):
 
     for i in range(episode_length):
         print(f"Process {os.getpid()}, game {i+1}")
-        games.append(play_game(1, 10))
+        games.append(play_game(1, 100))
 
     gamefile = str(uuid1())
 
