@@ -65,17 +65,21 @@ def train():
 
     def generator():
         i = 0
-        while i < len(training_data):
+        while i < len(boards):
             i += 300000 
             yield boards[(i-300000):i], policies[(i-300000):i], results[(i-300000):i]
 
-    for boards, policies, results in generator():
+    for boards0, policies0, results0 in generator():
     
-        print(f"Shape of boards: {boards.shape}")
-        print(f"Shape of policies: {policies.shape}") 
-        print(f"Shape of results: {results.shape}") 
-    
-        model.fit(boards, {'policy': policies, 'value': results}, epochs=1, batch_size=32)
+        print(f"Shape of boards: {boards0.shape}")
+        print(f"Shape of policies: {policies0.shape}") 
+        print(f"Shape of results: {results0.shape}") 
+
+        boards0 = np.array(boards0, dtype='float32')
+        results0 = np.array(results0, dtype='float32')
+        policies0 = np.array(policies0, dtype='float32')
+
+        model.fit(boards0, {'policy': policies0, 'value': results0}, epochs=1, batch_size=32)
 
     model.save_weights("baby_alphazero/v1")
     

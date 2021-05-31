@@ -26,4 +26,4 @@ def expand(games):
         expolicies += p8 
         expresults += [r]*8 
 
-    return np.array(expboards), np.array(expolicies), np.array(expresults)
+    return np.array(expboards, dtype='int8'), np.array(expolicies, dtype='int8'), np.array(expresults, dtype='int8')
