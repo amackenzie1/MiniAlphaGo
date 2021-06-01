@@ -7,13 +7,13 @@ def clean(board, priority):
 
     def live(board, number):
         for i in kids(number):
-            if board[i//11][i%11] == 0:
+            if board[i//5][i%5] == 0:
                 return True
         return False
     
     def kids(position):
-        potentials = [position + 1, position - 1, position + 11, position - 11]
-        potentials = [i for i in potentials if i >= 0 and i < 121 and abs(position % 11 - i % 11) < 2]
+        potentials = [position + 1, position - 1, position + 5, position - 5]
+        potentials = [i for i in potentials if i >= 0 and i < 25 and abs(position % 5 - i % 5) < 2]
         return potentials
     
     def search(root, all_positions):
@@ -26,9 +26,9 @@ def clean(board, priority):
 
     def get_connected_components(board, who):
         ccs = []
-        all_positions = list(range(121))
+        all_positions = list(range(25))
         for i in list(all_positions):
-            if board[i//11][i%11] != who:
+            if board[i//5][i%5] != who:
                 all_positions.remove(i)
         
                 
@@ -46,7 +46,7 @@ def clean(board, priority):
         for component in components:
             if True not in [live(board, i) for i in component]:
                 for i in component:
-                    board[i//11][i%11] = 0
+                    board[i//5][i%5] = 0
                 deaths.extend(component)
 
     if priority == 1:
@@ -60,7 +60,7 @@ def clean(board, priority):
     
 class Board:
     def __init__(self):
-        oneboard = [[0]*11]*11
+        oneboard = [[0]*5]*5
         self.board = np.array([oneboard]*3)
         self.board[0][1][1] = 1
         self.board[1][2][2] = -1
@@ -69,7 +69,7 @@ class Board:
 
     def display(self):
         print("")
-        print("   ---------------------------------------------")
+        print("   ---------------------")
         counter = 1
         for row in self.board[-1]:
             print(f"{counter}  |", end="") if len(str(counter)) == 1 else print(f"{counter} |", end="")
@@ -82,24 +82,24 @@ class Board:
                 else:
                     print(f"   |", end="")
             print("")
-            print("   ---------------------------------------------")
+            print("   ---------------------")
         print("    ", end="")
-        for i in "ABCDEFGHIJK":
+        for i in "ABCDE":
             print(f" {i}  ", end="")
         print()
         print(f"Moves: {self.moves}")
 
     def from_letters(self, move):
         row = int("".join([i for i in move if i.isnumeric()]))
-        column = "ABCDEFGHIJK".index("".join([i.upper() for i in move if i.isalpha()]))
+        column = "ABCDE".index("".join([i.upper() for i in move if i.isalpha()]))
         return row-1, column
 
     def from_numbers(self, move):
-        return move//11, move%11
+        return move//5, move%5
 
     def move(self, move, who):
 
-        if move == 121 or str(move).lower() == "pass":
+        if move == 25 or str(move).lower() == "pass":
             self.moves += 1
             return 2
 
@@ -141,16 +141,16 @@ class Board:
             self.board[i] = -1 * self.board[i]
 
     def is_done(self):
-        if self.moves > 130:
+        if self.moves > 30:
             return True
         if np.all(self.board[-1] == self.board[-2]) and np.all(self.board[-2] == self.board[-3]):
             return True
         return False 
     
     def get_moves(self, who):
-        moves = [121]
-        for i in range(121):
-            if self.board[-1][i//11][i%11] == 0:
+        moves = [25]
+        for i in range(25):
+            if self.board[-1][i//5][i%5] == 0:
                 if i not in self.recent_onedeaths:
                     moves.append(i)
                 else:
@@ -183,7 +183,7 @@ if __name__ == "__main__":
     board2 = board.clone() 
 
     t1 = time.time()
-    for i in range(140):
+    for i in range(30):
         board.display()
         x = random.choice(board.get_moves(turn))
         if board.move(x, turn) == 2:

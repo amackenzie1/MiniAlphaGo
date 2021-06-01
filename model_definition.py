@@ -10,7 +10,7 @@ from tensorflow.keras.optimizers import Adam
 
 reg = 1e-4
 
-inputs = keras.Input(shape=(11, 11, 6), name="board")
+inputs = keras.Input(shape=(5, 5, 6), name="board")
 x = Conv2D(64, 3, padding='same', kernel_regularizer=l2(reg))(inputs)
 x = BatchNormalization()(x)
 residue = Activation(activation='relu')(x)
@@ -36,7 +36,7 @@ x2 = Conv2D(2, 1, padding='same', kernel_regularizer=l2(reg))(residue)
 x2 = BatchNormalization()(x2)
 x2 = Activation(activation='relu')(x2)
 x2 = Flatten()(x2)
-x2 = Dense(122)(x2)
+x2 = Dense(26)(x2)
 policy = Softmax(name="policy")(x2)
 
 

@@ -14,7 +14,7 @@ from expand_boards import expand
 import random 
 from uuid import uuid1
 import sys 
-from sklearn import shuffle 
+from sklearn.utils import shuffle 
 
 model = get_model()
 model.load_weights("baby_alphazero/v1")

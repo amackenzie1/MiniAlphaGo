@@ -8,17 +8,17 @@ myboard.move(3, 1)
 
 counter = 0
 permboard = []
-for i in range(11):
+for i in range(5):
     permrow = []
-    for j in range(11): 
+    for j in range(5): 
         permrow.append(counter)
         counter += 1
     permboard.append(permrow)
 permboard = np.array(permboard)
 
 def permute(mylist, perm):
-    newlist = np.zeros(121)
-    for i in range(121):
+    newlist = np.zeros(25)
+    for i in range(25):
         newlist[i] = mylist[perm[i]]
     return newlist
 
@@ -47,15 +47,15 @@ def symmetries(board, probs):
     return boards, [np.append(i, probs[-1]) for i in probabilities]
 
 if __name__ == "__main__":
-    preprobs = np.zeros(121)
+    preprobs = np.zeros(25)
     preprobs[1] = 1
     preprobs[2] = 1
     boards, probs = symmetries(myboard.to_array(), preprobs)
     print(myboard.to_array().shape)
     def render(probs):
-        for i in range(11):
-            for j in range(11):
-                print(int(probs[i * 11 + j]), end="")
+        for i in range(5):
+            for j in range(5):
+                print(int(probs[i * 5 + j]), end="")
             print("")
 
     for i, j in zip(boards, probs):

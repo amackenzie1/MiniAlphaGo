@@ -21,7 +21,7 @@ model = get_model()
 
 def evaluate(board):
     if board.is_done():
-        return board.score(), Softmax()(np.array([0]*122, dtype='float32'))
+        return board.score(), Softmax()(np.array([0]*26, dtype='float32'))
 
     val, probs = model(np.array([board.to_array()]))
     return val.numpy()[0][0], np.squeeze(probs)
@@ -49,7 +49,7 @@ class MonteCarloSearchTree:
         if node.move is not None:
             node.board.move(node.move, -1)
         val, probs = evaluate(node.board)
-        probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.1]*122)
+        probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.1]*26)
         node.W = val
         node.Q = val
         node.N = 1
@@ -73,14 +73,14 @@ class MonteCarloSearchTree:
     
         
     def get_move(self):
-        distribution = [0 if i not in self.root.children.keys() else self.root.children[i].N for i in range(122)]
-        for i in range(122):
+        distribution = [0 if i not in self.root.children.keys() else self.root.children[i].N for i in range(26)]
+        for i in range(26):
             distribution[i] = distribution[i]**(1/self.tau)
         normalization = sum(distribution)
-        for i in range(122):
+        for i in range(26):
             distribution[i] = distribution[i]/normalization
         self.policy = [round(i, 5) for i in distribution] 
-        move = np.random.choice(a=122, p=distribution)
+        move = np.random.choice(a=26, p=distribution)
         return move
     
     def search_once(self, node):
@@ -139,8 +139,8 @@ class MonteCarloSearchTree:
         return 2
     
     def info(self):
-        print(f"Probabilities: {[0 if i not in self.root.children.keys() else self.root.children[i].P for i in range(122)]}")
-        print(f"Visits: {[0 if i not in self.root.children.keys() else self.root.children[i].N for i in range(122)]}")
+        print(f"Probabilities: {[0 if i not in self.root.children.keys() else self.root.children[i].P for i in range(26)]}")
+        print(f"Visits: {[0 if i not in self.root.children.keys() else self.root.children[i].N for i in range(26)]}")
         print(f"Policy: {self.policy}")
 
 def play_game(tau, depth):
@@ -167,7 +167,7 @@ def play_game(tau, depth):
         model_move = mcts.get_move() 
         x = mcts.advance_root(model_move)
 
-    boards.append(mcts.root.board.to_array())
+    boards.append(np.array(mcts.root.board.to_array(), dtype='int8'))
     policies.append(mcts.policy)
 
     return list(zip(boards, policies, get_sequence(len(boards), x)))
@@ -200,7 +200,7 @@ def iterate(episode_length):
 
     for i in range(episode_length):
         print(f"Process {os.getpid()}, game {i+1}")
-        games.append(play_game(1, 100))
+        games.append(play_game(1, 50))
 
     gamefile = str(uuid1())
 
