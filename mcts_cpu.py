@@ -200,7 +200,7 @@ def iterate(episode_length):
 
     for i in range(episode_length):
         print(f"Process {os.getpid()}, game {i+1}")
-        games.append(play_game(1, 50))
+        games.append(play_game(1, 400))
 
     gamefile = str(uuid1())
 
