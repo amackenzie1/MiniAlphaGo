@@ -246,7 +246,7 @@ def process(episode_length):
                 work(episode_length)
             except Exception as e:
                 fp = open(f"{os.getpid()}_error.txt", "w")
-                fp.write(str(Exception))
+                fp.write(str(e))
 
 
 move_map = {"a1":0, "b1": 1, "c1":2, "d1":3, "e1": 4, "a2":5, "b2":6 , "c2":7, "d2":8,
