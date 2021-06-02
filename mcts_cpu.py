@@ -41,7 +41,7 @@ class Node:
         self.turn = turn 
         self.done = False 
 
-c_puct = 1.5
+c_puct = 2
 
 class MonteCarloSearchTree:
 
@@ -129,7 +129,7 @@ class MonteCarloSearchTree:
         self.root = self.root.children[move]
         self.num_moves += 1
         if self.num_moves > 20:
-            self.tau = 0.01
+            self.tau = 0.2
         if self.root.N == 0:
             self.fill(self.root)
         if self.root.board.is_done():
@@ -174,7 +174,7 @@ def play_game(tau, depth):
 
 
 def play_vs_random():
-    mcts = MonteCarloSearchTree(0.01)
+    mcts = MonteCarloSearchTree(0.2)
     mcts.search(400)
     model_move = mcts.get_move()
     x = mcts.advance_root(model_move)
@@ -245,8 +245,11 @@ def process(episode_length):
             try:
                 work(episode_length)
             except Exception as e:
-                fp = open(f"{os.uname()}:{os.getpid()}_error.txt", "w")
+                print("Error!")
+                print(e)
+                fp = open(f"{os.uname()[1]}:{os.getpid()}_error.txt", "w")
                 fp.write(str(e))
+                fp.close()
 
 
 move_map = {"a1":0, "b1": 1, "c1":2, "d1":3, "e1": 4, "a2":5, "b2":6 , "c2":7, "d2":8,
@@ -254,7 +257,7 @@ move_map = {"a1":0, "b1": 1, "c1":2, "d1":3, "e1": 4, "a2":5, "b2":6 , "c2":7, "
             "c4":17, "d4":18, "e4":19, "a5":20, "b5":21, "c5":22, "d5":23, "e5":24, "pass":25}
 
 def play_vs_human(depth):
-    mcts = MonteCarloSearchTree(0.01)
+    mcts = MonteCarloSearchTree(0.2)
     mcts.search(depth)
     model_move = mcts.get_move()
     mcts.info()
