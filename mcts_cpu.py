@@ -49,7 +49,7 @@ class MonteCarloSearchTree:
         if node.move is not None:
             node.board.move(node.move, -1)
         val, probs = evaluate(node.board)
-        probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.1]*26)
+        probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.4]*26)
         node.W = val
         node.Q = val
         node.N = 1
@@ -89,7 +89,7 @@ class MonteCarloSearchTree:
 
         for i in node.children.values():
             total_visits += i.N
-        sqrt_total_visits = np.sqrt(total_visits)
+        sqrt_total_visits = np.sqrt(total_visits + 1)
 
         for i in node.children.keys():
             child = node.children[i]
@@ -128,7 +128,7 @@ class MonteCarloSearchTree:
                 del self.root.children[i]
         self.root = self.root.children[move]
         self.num_moves += 1
-        if self.num_moves > 30:
+        if self.num_moves > 20:
             self.tau = 0.01
         if self.root.N == 0:
             self.fill(self.root)
@@ -219,8 +219,9 @@ def benchmark(length):
     score = 0
     for i in range(length):
         print(f"Benchmark game {i+1}")
-        score += play_vs_random()
-    
+        result = play_vs_random()
+        print(result)
+        score += result
     wins = (score + length)/2 
     return wins/length 
 
@@ -244,10 +245,48 @@ def process(episode_length):
             work(episode_length)
 
 
+move_map = {"a1":0, "b1": 1, "c1":2, "d1":3, "e1": 4, "a2":5, "b2":6 , "c2":7, "d2":8,
+            "e2":9, "a3":10, "b3":11, "c3":12, "d3":13, "e3":14, "a4":15, "b4":16,
+            "c4":17, "d4":18, "e4":19, "a5":20, "b5":21, "c5":22, "d5":23, "e5":24, "pass":25}
+
+def play_vs_human(depth):
+    mcts = MonteCarloSearchTree(0.01)
+    mcts.search(depth)
+    model_move = mcts.get_move()
+    mcts.info()
+    x = mcts.advance_root(model_move)
+    mcts.root.board.display()
+    human_move = move_map[input("Your move: ").lower()]
+    mcts.advance_root(human_move)
+    mcts.root.board.flip()
+    mcts.root.board.display()
+    mcts.root.board.flip()
+    
+    while x == 2:
+        mcts.search(depth)
+        model_move = mcts.get_move()
+        mcts.info()
+        x = mcts.advance_root(model_move)
+        mcts.root.board.display()
+        if x != 2:
+            print("I win!")
+            return 1
+        human_move = move_map[input("Your move: ").lower()]
+        x = mcts.advance_root(human_move)
+        mcts.root.board.flip()
+        mcts.root.board.display()
+        mcts.root.board.flip()
+
 if "baby_alphazero" not in os.listdir():
     model.build(input_shape=(11, 11, 6))
     model.save_weights("baby_alphazero/v1")
 
 episode_length = int(sys.argv[1])
 
-process(episode_length)
+#model.load_weights("baby_alphazero/v1")
+
+try:
+    process(episode_length)
+except Exception as e:
+    fp = open(f"{os.getpid()}_error.txt")
+    fp.write(str(Exception))
