@@ -245,7 +245,7 @@ def process(episode_length):
             try:
                 work(episode_length)
             except Exception as e:
-                fp = open(f"{os.getpid()}_error.txt")
+                fp = open(f"{os.getpid()}_error.txt", "w")
                 fp.write(str(Exception))
 
 
