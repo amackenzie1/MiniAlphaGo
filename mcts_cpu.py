@@ -24,6 +24,7 @@ def evaluate(board):
         return board.score(), Softmax()(np.array([0]*26, dtype='float32'))
 
     val, probs = model(np.array([board.to_array()]))
+    print(f"Probs: {probs}")
     return val.numpy()[0][0], np.squeeze(probs)
 
 
@@ -291,5 +292,5 @@ if "baby_alphazero" not in os.listdir():
 episode_length = int(sys.argv[1])
 
 #model.load_weights("baby_alphazero/v1")
-
+#play_vs_human(400)
 process(episode_length)

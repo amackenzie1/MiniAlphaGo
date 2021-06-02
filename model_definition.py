@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import Sequential 
 from tensorflow.keras.layers import Conv2D, Dense, MaxPool2D, Flatten, Softmax, ZeroPadding2D, BatchNormalization, Activation
-from tensorflow.keras.losses import CategoricalCrossentropy 
+from tensorflow.keras.losses import BinaryCrossentropy 
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.optimizers import Adam
 
@@ -43,7 +43,7 @@ policy = Softmax(name="policy")(x2)
 model2 = keras.Model(inputs, outputs=[value, policy], name="mini_alphazero")
 model2.summary()
 
-model2.compile(loss={'policy': CategoricalCrossentropy(),
+model2.compile(loss={'policy': BinaryCrossentropy(),
                       'value': 'mse'}, optimizer="adam")
 
 def get_model():
