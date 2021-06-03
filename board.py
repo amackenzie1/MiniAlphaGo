@@ -88,6 +88,7 @@ class Board:
             print(f" {i}  ", end="")
         print()
         print(f"Moves: {self.moves}")
+        print(f"Done: {self.is_done()}")
 
     def from_letters(self, move):
         row = int("".join([i for i in move if i.isnumeric()]))
@@ -101,6 +102,7 @@ class Board:
 
         if move == 25 or str(move).lower() == "pass":
             self.moves += 1
+            self.board = np.concatenate([self.board[1:], np.array([self.board[-1]])])
             return 2
 
         if type(move) == str:
@@ -141,10 +143,13 @@ class Board:
             self.board[i] = -1 * self.board[i]
 
     def is_done(self):
-        if self.moves > 30:
+        if self.moves > 45:
             return True
-        if np.all(self.board[-1] == self.board[-2]) and np.all(self.board[-2] == self.board[-3]):
+        if np.all(self.board[-1] == self.board[0]):
             return True
+        else:
+            print(self.board[0])
+            print(self.board[-1])
         return False 
     
     def get_moves(self, who):
@@ -185,7 +190,7 @@ if __name__ == "__main__":
     t1 = time.time()
     for i in range(30):
         board.display()
-        x = random.choice(board.get_moves(turn))
+        x = int(input("Move: "))
         if board.move(x, turn) == 2:
             turn *= -1
     board.display()

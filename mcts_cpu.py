@@ -24,7 +24,6 @@ def evaluate(board):
         return board.score(), Softmax()(np.array([0]*26, dtype='float32'))
 
     val, probs = model(np.array([board.to_array()]))
-    print(f"Probs: {probs}")
     return val.numpy()[0][0], np.squeeze(probs)
 
 
@@ -50,7 +49,7 @@ class MonteCarloSearchTree:
         if node.move is not None:
             node.board.move(node.move, -1)
         val, probs = evaluate(node.board)
-        probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.4]*26)
+        #probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.4]*26)
         node.W = val
         node.Q = val
         node.N = 1
@@ -143,6 +142,7 @@ class MonteCarloSearchTree:
         print(f"Probabilities: {[0 if i not in self.root.children.keys() else self.root.children[i].P for i in range(26)]}")
         print(f"Visits: {[0 if i not in self.root.children.keys() else self.root.children[i].N for i in range(26)]}")
         print(f"Policy: {self.policy}")
+        print(f"Value: {self.root.Q}")
 
 def play_game(tau, depth):
     def get_sequence(length, result):
@@ -285,12 +285,15 @@ def play_vs_human(depth):
         mcts.root.board.display()
         mcts.root.board.flip()
 
+    print("You win...")
+
+
 if "baby_alphazero" not in os.listdir():
     model.build(input_shape=(11, 11, 6))
     model.save_weights("baby_alphazero/v1")
 
 episode_length = int(sys.argv[1])
 
-#model.load_weights("baby_alphazero/v1")
-#play_vs_human(400)
-process(episode_length)
+model.load_weights("baby_alphazero/v1")
+play_vs_human(400)
+#process(episode_length)
