@@ -49,7 +49,7 @@ class MonteCarloSearchTree:
         if node.move is not None:
             node.board.move(node.move, -1)
         val, probs = evaluate(node.board)
-        #probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.4]*26)
+        probs = 0.75 * probs + 0.25 * np.random.dirichlet([0.4]*26)
         node.W = val
         node.Q = val
         node.N = 1
@@ -294,6 +294,6 @@ if "baby_alphazero" not in os.listdir():
 
 episode_length = int(sys.argv[1])
 
-model.load_weights("baby_alphazero/v1")
-play_vs_human(400)
+#model.load_weights("baby_alphazero/v1")
+#play_vs_human(400)
 #process(episode_length)
